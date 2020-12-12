@@ -2,6 +2,8 @@
 
 ![GitHub](https://img.shields.io/github/downloads/Skirkp18/TrackExpense-App/total) ![GitHub](https://img.shields.io/github/languages/top/Skirkp18/TrackExpense-App) ![GitHub](https://img.shields.io/badge/license-MIT-green?style=flat) 
 
+<img src="./public/images/Screenshot%202020-12-12%20151907.jpg">
+
 ## Description
 This is a homework assignment where the application was already given, and the Service Worker and offline mode needed to be added.
 ## Table of Contents 
