@@ -3,41 +3,59 @@ const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexe
 let db;
 const request = indexedDB.open('budget', 1);
 
-request.onupgradeneeded = ({ target }) => {
-    db = target.result;
+request.onupgradeneeded = function (event) {
+    const db = event.target.result;
     db.createObjectStore("pending", { autoIncrement: true });
 };
 
-request.onsuccess = ({ target }) => {
-    db = target.result;
+request.onsuccess = function (event) {
+    db = event.target.result;
     if (navigator.onLine) {
         checkDatabase();
     }
 };
 
-request.onerror = function(event) {
-    console.log("error")
-    // saveRecord(event);
+request.onerror = function (event) {
+    console.log("Woops! " + event.target.errorCode);
 
 };
 
 
 function saveRecord(data) {
     console.log(data);
-    // register service worker
+    
+  const transaction = db.transaction(["pending"], "readwrite");
+  const store = transaction.objectStore("pending");
+  store.add(data);
 
-    // check for service worker
-
-
-    // SW lifecycle
-
-        // Install -> create bulk (pending) collection
-
-        // activate ->
-
-
-        // saveRecord -> save to indexedDB
-
-        // listen online and send records
         
 }
+
+function checkDatabase() {
+    const transaction = db.transaction(["pending"], "readwrite");
+    const store = transaction.objectStore("pending");
+    const getAll = store.getAll();
+  
+    getAll.onsuccess = function() {
+      if (getAll.result.length > 0) {
+        fetch("/api/transaction/bulk", {
+          method: "POST",
+          body: JSON.stringify(getAll.result),
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+          }
+        })
+        .then(response => response.json())
+        .then(() => {
+          const transaction = db.transaction(["pending"], "readwrite");
+  
+          const store = transaction.objectStore("pending");
+  
+          store.clear();
+        });
+      }
+    };
+  }
+  
+  window.addEventListener("online", checkDatabase);
