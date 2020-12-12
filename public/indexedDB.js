@@ -1,8 +1,7 @@
 function saveRecord(data) {
     console.log(data);
-
-
     // register service worker
+
     // check for service worker
 
 
